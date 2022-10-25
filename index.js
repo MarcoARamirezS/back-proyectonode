@@ -13,10 +13,26 @@ app.use(bodyparser.urlencoded({
 app.use(bodyparser.json())
 
 // Conexion a la Base de Datos
+// console.log(process.env.USERNAME, process.env.PASSWORD,process.env.DBNAME)
+
+const uri = `mongodb+srv://marquito:marquito@cluster0.fkkq4hw.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority`
+
+mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Conectado a BD')
+}).catch(e => {
+    console.log('error: ', e)
+})
+
 
 // Importar Rutas
+const authRoutes = require('./routes/auth')
 
 // Ruta del Middleware
+app.use('/api/user', authRoutes)
+
 app.get('/', (req, res) => {
     res.json({
         estado: true,
@@ -25,7 +41,7 @@ app.get('/', (req, res) => {
 })
 
 // Inicializar servidor
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
     console.log(`Servidor Corriendo: ${PORT}`)
 })
